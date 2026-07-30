@@ -411,11 +411,6 @@ func decryptHandler(cmd *cobra.Command, args []string) {
 			return
 		}
 
-		if app.Price > 0 && !decryptOwned {
-			live.Fail("paid app (price=%v) - pass --owned if this Apple ID already owns it", app.Price)
-			return
-		}
-
 		live.OK("found %s on App Store", app.BundleID)
 
 		live = tui.NewLive()
