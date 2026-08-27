@@ -16,6 +16,13 @@
 
 </div>
 
+# FORK NOTES:
+This fork is an attempt to workaround [this issue](https://github.com/londek/ipadecrypt/issues/43) in the original. It uses the fixes found in [ipatool-sapfix](https://github.com/maksimryabkin/ipatool-sapfix) to get `ipadecrypt` working again.
+## BIG CAVEAT:
+This will **only** work on macOS, and has only been tested on an Apple Silicon Mac for now. It may work on Intel Macs, I'm not sure. 
+
+## Original README.md continues here:
+
 ## Requirements
 
 ### On your computer
