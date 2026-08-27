@@ -2,7 +2,9 @@ package appstore
 
 import (
 	"bytes"
+	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -29,6 +31,17 @@ var (
 // out (when non-nil) per format. The returned *http.Response has an already-
 // drained body - callers inspect StatusCode/Header only.
 func (c *Client) send(method, url string, headers map[string]string, body []byte, format responseFormat, out any) (*http.Response, error) {
+	return c.sendWithSign(method, url, headers, body, format, out, false)
+}
+
+// sendSigned is send with Apple's SAP action signature attached. The private
+// auth endpoint rejects login requests that don't carry a valid
+// X-Apple-ActionSignature header.
+func (c *Client) sendSigned(method, url string, headers map[string]string, body []byte, format responseFormat, out any) (*http.Response, error) {
+	return c.sendWithSign(method, url, headers, body, format, out, true)
+}
+
+func (c *Client) sendWithSign(method, url string, headers map[string]string, body []byte, format responseFormat, out any, signAction bool) (*http.Response, error) {
 	var r io.Reader
 	if len(body) > 0 {
 		r = bytes.NewReader(body)
@@ -45,6 +58,19 @@ func (c *Client) send(method, url string, headers map[string]string, body []byte
 
 	if req.Header.Get("User-Agent") == "" {
 		req.Header.Set("User-Agent", defaultUserAgent)
+	}
+
+	if signAction {
+		if c.actionSigner == nil {
+			return nil, errors.New("failed to sign Apple action: signer is not configured")
+		}
+
+		signature, err := c.actionSigner(body)
+		if err != nil {
+			return nil, fmt.Errorf("failed to sign Apple action: %w", err)
+		}
+
+		req.Header.Set(hdrAppleActionSignature, base64.StdEncoding.EncodeToString(signature))
 	}
 
 	res, err := c.http.Do(req)

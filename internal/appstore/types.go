@@ -55,8 +55,9 @@ const (
 	PrivateAuthDomain     = "auth." + iTunesDomain
 	PrivateAuthPathNative = "/auth/v1/native/fast/"
 
-	hdrStoreFront = "X-Set-Apple-Store-Front"
-	hdrPod        = "pod"
+	hdrStoreFront           = "X-Set-Apple-Store-Front"
+	hdrPod                  = "pod"
+	hdrAppleActionSignature = "X-Apple-ActionSignature"
 
 	pricingAppStore    = "STDQ"
 	pricingAppleArcade = "GAME"

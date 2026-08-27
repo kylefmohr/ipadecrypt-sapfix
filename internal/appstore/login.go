@@ -60,7 +60,7 @@ func (c *Client) Login(email, password, authCode string) (*Account, error) {
 
 		out = loginResult{}
 
-		res, err = c.send(http.MethodPost, url, map[string]string{
+		res, err = c.sendSigned(http.MethodPost, url, map[string]string{
 			"Content-Type": "application/x-www-form-urlencoded",
 		}, body, formatXML, &out)
 		if err != nil {

@@ -7,11 +7,17 @@ import (
 	"strings"
 
 	cookiejar "github.com/juju/persistent-cookiejar"
+
+	"github.com/londek/ipadecrypt/internal/mescal"
 )
 
+// ActionSigner signs the raw request body for Apple's protected Store actions.
+type ActionSigner func(data []byte) ([]byte, error)
+
 type Client struct {
-	jar  *cookiejar.Jar
-	http *http.Client
+	jar          *cookiejar.Jar
+	http         *http.Client
+	actionSigner ActionSigner
 }
 
 func New(cookiesFile string) (*Client, error) {
@@ -31,7 +37,7 @@ func New(cookiesFile string) (*Client, error) {
 		},
 	}
 
-	return &Client{jar: jar, http: hc}, nil
+	return &Client{jar: jar, http: hc, actionSigner: mescal.Sign}, nil
 }
 
 // guid returns the Configurator-shaped GUID: uppercase MAC address, no colons.
